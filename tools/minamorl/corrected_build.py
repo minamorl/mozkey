@@ -17,12 +17,13 @@ from corrected_inputs import (
     sha256_file, source_fingerprint, verify_dataset, verify_fork_checkout, verify_ibus_build, verify_pc_zip,
 )
 from corrected_recipe import (
-    LOCKFILE_FLAG, PACKAGE_TARGET, json_object, measure_notices, measure_recipe, public_dataset_cli,
+    PACKAGE_TARGET, json_object, measure_notices, measure_recipe, public_dataset_cli,
     recipe_members, release_build_options, verify_embedded_dataset, verify_overlay,
 )
 
 
 HOSTS = {"x86_64-linux": "x86_64", "aarch64-linux": "aarch64"}
+WORKSPACE_LABEL = re.compile(r"//(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*)?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*")
 
 
 def emit(value):
@@ -38,14 +39,22 @@ def worktree_state(target_dir, sha):
     return source_fingerprint(target_dir, sha)
 
 
-def body_targets(bazel, workspace, registration):
-    expression = 'kind("cc_binary rule", deps(//unix:package))'
-    raw = checked_output([bazel, "query", registration, LOCKFILE_FLAG, "--noimplicit_deps", "--output=label", expression],
-                      cwd=workspace)
-    labels = sorted(set(line for line in raw.decode("utf-8").splitlines() if line.startswith("//")))
-    if not labels or any(not re.fullmatch(r"//[A-Za-z0-9_/.-]*:[A-Za-z0-9_/.-]+", label) for label in labels):
+def body_targets(bazel, workspace, build_options):
+    expression = f'filter("^(@@)?//", kind("^cc_binary rule$", deps({PACKAGE_TARGET})))'
+    raw = checked_output([
+        bazel, "cquery", *build_options, f"--universe_scope={PACKAGE_TARGET}", "--noimplicit_deps",
+        "--output=starlark", "--starlark:expr=str(target.label)", expression,
+    ], cwd=workspace)
+    labels = [line.removeprefix("@@") for line in raw.decode("utf-8", errors="replace").splitlines()]
+    if not labels or any(
+        not WORKSPACE_LABEL.fullmatch(label)
+        or label.endswith((":all", ":all-targets", ":*"))
+        or {".", ".."}.intersection(label.partition(":")[2].split("/"))
+        or any(part and not part.strip(".") for part in label[2:].partition(":")[0].split("/"))
+        for label in labels
+    ):
         raise InputError("Could not identify the corrected package's workspace binary targets")
-    return labels
+    return sorted(set(labels))
 
 
 def require_executed_test(events):
@@ -148,7 +157,7 @@ def build_outputs(args, trace, root, ea2, target_dir, control_dir, target, packa
                                 f"--build_event_json_file={events}", TEST_TARGET], context)
     require_executed_test(events)
     body = run_phase("body_build", [args.bazel, "build", *build_options,
-                                    *body_targets(args.bazel, workspace, registration)], context)
+                                    *body_targets(args.bazel, workspace, build_options)], context)
     package = run_phase("package_build", [args.bazel, "build", *build_options, PACKAGE_TARGET], context)
 
     package_path = workspace / "bazel-bin" / "unix" / "mozc.zip"

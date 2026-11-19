@@ -79,10 +79,15 @@ jobs:
           printf 'value=%s\n' "$job_id" >> "$GITHUB_OUTPUT"
 
       - name: Install native build and ELF inspection tools
+        timeout-minutes: 8
         shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
+          if [[ "$CORRECTED_SYSTEM" == x86_64-linux ]]; then
+            sudo --preserve-env=GITHUB_ACTIONS,GITHUB_REPOSITORY python3 -B recipe/tools/minamorl/corrected_apt.py
+          fi
+          apt_options=(-o Acquire::http::Timeout=10 -o Acquire::https::Timeout=10 -o Acquire::Retries=2)
+          sudo apt-get "${apt_options[@]}" update
+          sudo apt-get "${apt_options[@]}" install -y --no-install-recommends \
             binutils build-essential clang libglib2.0-dev libgtk-3-dev libibus-1.0-dev \
             libx11-dev libxcb-keysyms1-dev libxcb1-dev libxkbcommon-dev pax-utils \
             pkg-config python3-pyelftools qt6-base-dev qt6-svg-dev unzip zip
