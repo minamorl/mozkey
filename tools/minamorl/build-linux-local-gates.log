@@ -1,0 +1,34 @@
+1.7.12
+installed by downloading from release page
+built with go1.26.1 compiler for darwin/arm64
+actionlint: exit 0
+shellcheck and bash -n: exit 0
+test_archive_accepts_native_layout_for_each_arch (__main__.ProvenanceTest) ... ok
+test_bazelignore_and_tracked_lock_additions_and_changes_are_rejected (__main__.ProvenanceTest) ... ok
+test_changed_config_or_lock_fails (__main__.ProvenanceTest) ... ok
+test_dictionary_generator_code_change_is_rejected (__main__.ProvenanceTest) ... ok
+test_elf_without_executable_or_pie_type_is_rejected (__main__.ProvenanceTest) ... ok
+test_existing_packager_icon_subdirectories_are_accepted (__main__.ProvenanceTest) ... ok
+test_normalized_zip_duplicates_and_file_directory_conflicts_are_rejected (__main__.ProvenanceTest) ... ok
+test_package_records_archive_identity_without_environment_secrets (__main__.ProvenanceTest) ... ok
+test_plan_rejects_refs_and_duplicate_control (__main__.ProvenanceTest) ... ok
+test_renderer_target_build_configuration_change_is_rejected (__main__.ProvenanceTest) ... ok
+test_restore_exact_snapshot_and_refuse_overwrite (__main__.ProvenanceTest) ... ok
+test_separate_ci_recipe_can_be_added_without_changing_build_inputs (__main__.ProvenanceTest) ... ok
+test_snapshot_includes_target_notices_and_verified_checksums (__main__.ProvenanceTest) ... ok
+test_snapshot_rejects_tampered_missing_extra_or_linked_notices (__main__.ProvenanceTest) ... ok
+test_source_notices_reject_missing_and_empty_documents (__main__.ProvenanceTest) ... ok
+test_tampered_manifest_payload_and_extra_file_fail (__main__.ProvenanceTest) ... ok
+test_ui_only_revision_keeps_dictionary_identity (__main__.ProvenanceTest) ... ok
+test_wrong_elf_missing_binary_and_unknown_layout_fail (__main__.ProvenanceTest) ... ok
+test_zip_traversal_symlink_and_duplicate_fail (__main__.ProvenanceTest) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 15.868s
+
+OK
+provenance recipe tests: exit 0
+wrong-repository: exit 1; ERROR: fork Actions runner required
+not-actions: exit 1; ERROR: fork Actions runner required
+fork and Actions guard assertions: exit 0
+git diff whitespace checks (including untracked files): exit 0
