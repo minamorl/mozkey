@@ -1,0 +1,4 @@
+2acd4614d9b95a3be4ca7b29bcee164d1b753f358a62441e50490c8fce533c30  /nix/store/ma0ab4ipfnz1hqhm3xq3qhkbnfdl0y2l-mozkey-ea2e9f5c-linux.zip
+00000000003f84a0 00000000022a4fc8 r mozc::oss::(anonymous namespace)::kOssMozcDataSet_data
+  [12] .rodata           PROGBITS        00000000003c4f40 3c4f40 22ea86a 00   A  0   0 64
+0000000000268a60 00000000000003a8 r mozc::(anonymous namespace)::kPosArray_data

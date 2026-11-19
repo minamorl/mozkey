@@ -1,0 +1,19 @@
+{
+  "source_sha": "ea2e9f5cfb80fccf50caca1af097b2f0830be52a",
+  "pc_zip_sha256": "2acd4614d9b95a3be4ca7b29bcee164d1b753f358a62441e50490c8fce533c30",
+  "dataset_sha256": "9ef432c90b46b60aa7cd022176edc8e4b922c5855a1b6c8801a04e822683a4f8",
+  "dataset_bytes": 36327368,
+  "dataset_version": "24.11.oss",
+  "dataset_symbol": {
+    "symbol": "_ZN4mozc3oss12_GLOBAL__N_1L20kOssMozcDataSet_dataE",
+    "file_offset": 4162720,
+    "symbol_size": 36327368
+  },
+  "pos_sha256": "2e8e6a25423cea16a71eadd850e10936dfdd614d660680afe2b57713c9a9def4",
+  "pos_bytes": 934,
+  "pos_symbol": {
+    "symbol": "_ZN4mozc12_GLOBAL__N_1L14kPosArray_dataE",
+    "file_offset": 2525792,
+    "symbol_size": 936
+  }
+}

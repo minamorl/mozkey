@@ -19,30 +19,26 @@ export ANDROID_NDK_HOME=''
 case "$mode" in
   dictionary)
     [[ $# == 3 ]] || die 'unexpected dictionary arguments'
-    command -v pwsh >/dev/null || die 'PowerShell missing on dictionary runner'
-    # Upstream preparation uses python (not only python3), Bash and bzip2.
-    sudo apt-get update
-    sudo apt-get install -y --no-install-recommends python-is-python3 bzip2
     profile=$(python3 "$recipe_dir/build_linux_metadata.py" profile "$source_root")
-    producer=$source_root
-    if [[ $profile == upstream-ea2e9f5c-mozc ]]; then
-      # The old immutable source has no input lock/notices. Prepare external
-      # dictionary data in the separate reviewed recipe checkout, never patch it.
-      producer=$(cd "$recipe_dir/../.." && pwd)
-      [[ $producer != "$source_root" ]] || die 'legacy source and dictionary recipe must be separate'
-      [[ $(git -C "$producer" rev-parse HEAD) == "${GITHUB_SHA:?}" ]] || die 'dictionary recipe SHA mismatch'
-      [[ -z $(git -C "$producer" status --porcelain --untracked-files=normal) ]] || die 'dictionary recipe must be clean'
-    fi
-    timeout 45m pwsh -NoLogo -NoProfile -NonInteractive -File "$producer/tools/dictionary/prepare_daily_dictionary.ps1"
-    git -C "$producer" diff --exit-code HEAD --
+    [[ $profile == upstream-ea2e9f5c-mozc ]] || die 'PC dataset reuse is pinned to unchanged EA2'
+    # Existing PC bytes only: no PowerShell/importer/data builder fallback.
+    curl --fail --location --silent --show-error --max-time 180 --retry 2 \
+      'https://github.com/minamorl/mozkey/releases/download/ci-pc-ea2e9f5c-data/mozkey-ea2e9f5c-linux.zip' \
+      -o "$RUNNER_TEMP/pc-linux.zip"
+    python3 "$recipe_dir/build_linux_dataset.py" "$RUNNER_TEMP/pc-linux.zip" "$RUNNER_TEMP/pc-data"
     git -C "$source_root" diff --exit-code HEAD --
-    python3 "$recipe_dir/build_linux_metadata.py" snapshot "$source_root" "$output" "$producer"
+    python3 "$recipe_dir/build_linux_metadata.py" pc-snapshot "$source_root" "$output" "$RUNNER_TEMP/pc-data"
     ;;
   package)
     [[ $# == 4 ]] || die 'snapshot directory required'
     : "${EXPECTED_SOURCE_SHA:?}" "${EXPECTED_ARCH:?}" "${EXPECTED_DICTIONARY_SHA256:?}"
     [[ $(git -C "$source_root" rev-parse HEAD) == "$EXPECTED_SOURCE_SHA" ]] || die 'source SHA mismatch'
     [[ $(uname -m) == "$EXPECTED_ARCH" ]] || die 'native architecture mismatch'
+    extra_args=()
+    if [[ $EXPECTED_SOURCE_SHA == ea2e9f5cfb80fccf50caca1af097b2f0830be52a ]]; then
+      [[ -f $4/dataset.json ]] || die 'EA2 body build requires existing PC dataset; regeneration is forbidden'
+      extra_args+=("--package_path=$RUNNER_TEMP/dataset-overlay:%workspace%" --strip=never)
+    fi
     python3 "$recipe_dir/build_linux_metadata.py" restore "$source_root" "$4" "$EXPECTED_DICTIONARY_SHA256"
     sudo apt-get update
     sudo apt-get install -y --no-install-recommends libibus-1.0-dev qt6-base-dev build-essential pkg-config python-is-python3
@@ -70,7 +66,7 @@ case "$mode" in
     chmod 755 "$bazelisk"
     cd "$source_root/src"
     timeout 80m "$bazelisk" --batch --nosystem_rc --nohome_rc \
-      --output_user_root="$RUNNER_TEMP/bazel-output" build package --config release_build --jobs=2
+      --output_user_root="$RUNNER_TEMP/bazel-output" build package --config release_build --jobs=2 "${extra_args[@]}"
     # Detect source/config drift before declaring provenance.
     git -C "$source_root" diff --exit-code HEAD --
     python3 "$recipe_dir/build_linux_metadata.py" package "$source_root" "$output" "$4" "$EXPECTED_ARCH"

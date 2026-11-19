@@ -1,0 +1,298 @@
+{
+  "dataset_bytes": 36327368,
+  "dataset_sha256": "9ef432c90b46b60aa7cd022176edc8e4b922c5855a1b6c8801a04e822683a4f8",
+  "dataset_symbol": {
+    "file_offset": 4162720,
+    "symbol": "_ZN4mozc3oss12_GLOBAL__N_1L20kOssMozcDataSet_dataE",
+    "symbol_size": 36327368
+  },
+  "dataset_version": "24.11.oss",
+  "entries": {
+    "a11y_description_string": {
+      "offset": 36067988,
+      "sha256": "fc1ce1244cbbdb6b74d94a1245b82224560a929b19bf2462c73e65296624ee6c",
+      "size": 89
+    },
+    "a11y_description_token": {
+      "offset": 36067940,
+      "sha256": "786337c7847bcf479905d3e8e20a28cc4b1f14a8d42bdf57efbb8f487641d9b3",
+      "size": 48
+    },
+    "bdry": {
+      "offset": 34455720,
+      "sha256": "ff42126ac86d6db07f2870771b21c6191afac032cfb6f8cd12da8bc942a5fdd8",
+      "size": 10700
+    },
+    "coll": {
+      "offset": 4300,
+      "sha256": "1d87a94f131e8a4b772b228f934dc82373fc392978597c46b092ad9e82ad3e85",
+      "size": 176
+    },
+    "cols": {
+      "offset": 4476,
+      "sha256": "5e149bbeb0514d4411f8cf8533edec6fc33124a696f1f1a516479c0a5258b0e7",
+      "size": 20
+    },
+    "conn": {
+      "offset": 4496,
+      "sha256": "396a4e3f0482dbe29783873fe59e81fd46d2175819ce69263e0f9fd20e233200",
+      "size": 2224648
+    },
+    "counter_suffix": {
+      "offset": 34477284,
+      "sha256": "d04861fc40d6430ee594becc8e6dae772ae3efd55aa298996af852761ee28aed",
+      "size": 8826
+    },
+    "dict": {
+      "offset": 2229144,
+      "sha256": "24b39e26696c2c511674da497f114d70c64d19838698b5ad61772c389f798546",
+      "size": 32123888
+    },
+    "emoji_string": {
+      "offset": 35111808,
+      "sha256": "ed8862a2bf2e70431963e44e52d6be96a2619c8e5a11977acdb73cb879a02943",
+      "size": 153709
+    },
+    "emoji_token": {
+      "offset": 34849112,
+      "sha256": "a4d29011e16139e058797c39f188325424c3db26edd35f4d38cc0fe885e86a3e",
+      "size": 262696
+    },
+    "emoticon_string": {
+      "offset": 34830028,
+      "sha256": "136f8f45a740ad491ea7c0ad9a42f91e7ed2ad18db51ff9ab5ac7ecbd2894ecf",
+      "size": 19083
+    },
+    "emoticon_token": {
+      "offset": 34806436,
+      "sha256": "1124b401c0681d578bd3dc4abe8440d8dd8422e5db382a058510c9d49cfdae5e",
+      "size": 23592
+    },
+    "pos_matcher": {
+      "offset": 8,
+      "sha256": "091a0e3266fb768dcc39aa459c100bbd2dff49391bd4c401b9563a63e6d74736",
+      "size": 778
+    },
+    "posg": {
+      "offset": 34453044,
+      "sha256": "2d9d098e2265c75664baae3d64d13a96fca0e093e298e10bce2f66a26d3b44fd",
+      "size": 2675
+    },
+    "reading_correction_correction": {
+      "offset": 34562352,
+      "sha256": "722ae93dae58f537db64b4a58e5cb8a428d980ce6e2947127901b3de4d116af2",
+      "size": 17308
+    },
+    "reading_correction_error": {
+      "offset": 34544744,
+      "sha256": "95bb3d9829712763d7a5af7a52f3b7bc4cc96224c052a8a6f80d68bc45ea3e0b",
+      "size": 17605
+    },
+    "reading_correction_value": {
+      "offset": 34531924,
+      "sha256": "47fc7c674102c74d35582ba69833080c44f4dfc3caab253da094915915cde5b4",
+      "size": 12820
+    },
+    "segmenter_bitarray": {
+      "offset": 34477128,
+      "sha256": "7217eb3da62dc171c0d6daa3e5b01284115e5d52534cf9decec2791a71083beb",
+      "size": 156
+    },
+    "segmenter_ltable": {
+      "offset": 34466424,
+      "sha256": "ba2aff321b4ab08384dc8728db9ce8959810039f827af33edc6914146bd311a8",
+      "size": 5352
+    },
+    "segmenter_rtable": {
+      "offset": 34471776,
+      "sha256": "2e34f194dbd85e94d22e363e7cbb25907b84789b18ccb8b4738ab7f3ab29d6ed",
+      "size": 5352
+    },
+    "segmenter_sizeinfo": {
+      "offset": 34466420,
+      "sha256": "530943feb9713c93ec585f90d74a6cac93d246189a7d450a232a22244c6eaf72",
+      "size": 4
+    },
+    "single_kanji_noun_prefix_string": {
+      "offset": 35495136,
+      "sha256": "0a7ec177829aaa5f6088d70f1ba5dec6e64cf570fe90492e15b775acda823d42",
+      "size": 631
+    },
+    "single_kanji_noun_prefix_token": {
+      "offset": 35494368,
+      "sha256": "2a7897192953199f948e1eb434fb79f2e4ab33d341f11d10be6e6ee6ef6dd4d2",
+      "size": 768
+    },
+    "single_kanji_string": {
+      "offset": 35295328,
+      "sha256": "69a2d5a4c297599d29573300dd2f20199e59d1621b2b1f2a0d47aa4b3dfe7888",
+      "size": 168415
+    },
+    "single_kanji_token": {
+      "offset": 35265520,
+      "sha256": "57c66a4d560f35bfde1bd84f312c9afc17da53fc9e94e12f17a931fa42c173b1",
+      "size": 29808
+    },
+    "single_kanji_variant_string": {
+      "offset": 35474152,
+      "sha256": "8056b173e1aea0e1c833137fe0a739e0ae0a8ebf0d4dfdd9ddb35e0b68d830f8",
+      "size": 20214
+    },
+    "single_kanji_variant_token": {
+      "offset": 35464048,
+      "sha256": "c83a0913aa76146a26469f37aae9e73cbea8ba7fd92e7feb18f0831287c34c12",
+      "size": 10104
+    },
+    "single_kanji_variant_type": {
+      "offset": 35463744,
+      "sha256": "e7ee0b43166796bceaa79695baaa5e1c2ab494d9049f9969e599136a79a44f04",
+      "size": 304
+    },
+    "suffix_key": {
+      "offset": 34486112,
+      "sha256": "a01558585a9e8cb002534f5e184513b19659322b01c45bd4e7fe622c2ae959f2",
+      "size": 21659
+    },
+    "suffix_token": {
+      "offset": 34518256,
+      "sha256": "f6a5348fb3048121d394a5e834900e67dd16a7e3929d3bf09cbf7cf91d91ddaa",
+      "size": 13668
+    },
+    "suffix_value": {
+      "offset": 34507772,
+      "sha256": "56c5eaa8e2548f4333d85ea7715979749c000d3e3f70b036231f0ef52da0464b",
+      "size": 10483
+    },
+    "sugg": {
+      "offset": 34353032,
+      "sha256": "7359c56d46d3715efe826b68f59d3801f190db8dd5b507603583d33e4a725d56",
+      "size": 100012
+    },
+    "symbol_string": {
+      "offset": 34720348,
+      "sha256": "e906464133c63ff819096be28b7d492214fe096f11eb18815276a56e1de790c2",
+      "size": 86088
+    },
+    "symbol_token": {
+      "offset": 34579660,
+      "sha256": "7c663d3796ee0765bc00d20f06c672561874384ce38e5af27278aa4e31c5a94f",
+      "size": 140688
+    },
+    "usage_base_conjugation_suffix": {
+      "offset": 36068092,
+      "sha256": "1c365f67f2eca71dd47318bec735ec2fca019c29bdd9908a5b9122878deeea28",
+      "size": 152
+    },
+    "usage_conjugation_index": {
+      "offset": 36069268,
+      "sha256": "076febfac97c8fcb2835ae98cfe38927713c54dd00724cbab0cb3430edefde3b",
+      "size": 80
+    },
+    "usage_conjugation_suffix": {
+      "offset": 36068244,
+      "sha256": "157c03fa6c579f93647a17c5f5ab07d45165ea136280675acaf3ce48df6f81e8",
+      "size": 1024
+    },
+    "usage_item_array": {
+      "offset": 36069348,
+      "sha256": "ae15e5a8f520838bee0def57950255e3eacd937a3fec76e4e89fe95e0a8bb351",
+      "size": 34960
+    },
+    "usage_string_array": {
+      "offset": 36104308,
+      "sha256": "5a4f6af2c11e8572059380d8966e02a68e6587fa20c97eb70e56de8d4f057b8c",
+      "size": 221689
+    },
+    "user_pos_string": {
+      "offset": 2100,
+      "sha256": "bc224566e93bd0806e95a74be4d878e77b9a4cb4cf990648456fb49b81b393db",
+      "size": 2200
+    },
+    "user_pos_token": {
+      "offset": 788,
+      "sha256": "c7c257c27c1865c9851b4ff155e5c616fa39c78cf72b9a75e83a0185152ba077",
+      "size": 1312
+    },
+    "version": {
+      "offset": 36068080,
+      "sha256": "027f55c8875fa1b4f0f2c3e14169bc6f99d02677f213800a359059aa309d830e",
+      "size": 9
+    },
+    "zero_query_number_string_array": {
+      "offset": 36055224,
+      "sha256": "1eb199fce9882c3798b2f381382389d1179cf71ad709e489d704484dc174418a",
+      "size": 12715
+    },
+    "zero_query_number_token_array": {
+      "offset": 35926632,
+      "sha256": "e936eff4ae4934b3b933b98f2853dac098eedd0d3f447c1f11d1d0e169ae25e8",
+      "size": 128592
+    },
+    "zero_query_string_array": {
+      "offset": 35682808,
+      "sha256": "c8abf24e2ea18902d6d058d2af0559604ba20d3c0ca70770d1f17afa4dfc98ba",
+      "size": 243823
+    },
+    "zero_query_token_array": {
+      "offset": 35495768,
+      "sha256": "0950a52793c665f6eb5bea0e63e9ac4e784cd875fb70fa79f30c92575ab186d8",
+      "size": 187040
+    }
+  },
+  "pc_zip_sha256": "2acd4614d9b95a3be4ca7b29bcee164d1b753f358a62441e50490c8fce533c30",
+  "pos_bytes": 934,
+  "pos_names": [
+    "品詞なし",
+    "名詞",
+    "短縮よみ",
+    "サジェストのみ",
+    "固有名詞",
+    "人名",
+    "姓",
+    "名",
+    "組織",
+    "地名",
+    "名詞サ変",
+    "名詞形動",
+    "数",
+    "アルファベット",
+    "記号",
+    "顔文字",
+    "副詞",
+    "連体詞",
+    "接続詞",
+    "感動詞",
+    "接頭語",
+    "助数詞",
+    "接尾一般",
+    "接尾人名",
+    "接尾地名",
+    "動詞ワ行五段",
+    "動詞カ行五段",
+    "動詞サ行五段",
+    "動詞タ行五段",
+    "動詞ナ行五段",
+    "動詞マ行五段",
+    "動詞ラ行五段",
+    "動詞ガ行五段",
+    "動詞バ行五段",
+    "動詞ハ行四段",
+    "動詞一段",
+    "動詞カ変",
+    "動詞サ変",
+    "動詞ザ変",
+    "動詞ラ変",
+    "形容詞",
+    "終助詞",
+    "句読点",
+    "独立語",
+    "抑制単語"
+  ],
+  "pos_sha256": "2e8e6a25423cea16a71eadd850e10936dfdd614d660680afe2b57713c9a9def4",
+  "pos_symbol": {
+    "file_offset": 2525792,
+    "symbol": "_ZN4mozc12_GLOBAL__N_1L14kPosArray_dataE",
+    "symbol_size": 936
+  },
+  "source_sha": "ea2e9f5cfb80fccf50caca1af097b2f0830be52a"
+}
