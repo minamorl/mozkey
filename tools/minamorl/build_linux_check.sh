@@ -13,6 +13,8 @@ done
 echo 'shellcheck and bash -n: exit 0'
 PYTHONDONTWRITEBYTECODE=1 python3 tools/minamorl/build_linux_test.py
 echo 'provenance recipe tests: exit 0'
+PYTHONDONTWRITEBYTECODE=1 python3 tools/minamorl/build_linux_compat_test.py
+echo 'unpatched PC revision compatibility fixtures: exit 0'
 for guard_case in wrong-repository not-actions; do
   if [[ $guard_case == wrong-repository ]]; then
     actions=true
@@ -35,14 +37,4 @@ for guard_case in wrong-repository not-actions; do
   echo "$guard_case: exit $status; $report"
 done
 echo 'fork and Actions guard assertions: exit 0'
-git diff --check
-for path in .github/workflows/minamorl-linux-build.yml tools/minamorl/build*; do
-  # New lane files are untracked until root stages them; check them too.
-  if report=$(git diff --no-index --check -- /dev/null "$path" 2>&1); then
-    :
-  else
-    status=$?
-    [[ $status == 1 && -z $report ]] || { echo "$report" >&2; exit 1; }
-  fi
-done
-echo 'git diff whitespace checks (including untracked files): exit 0'
+PYTHONDONTWRITEBYTECODE=1 python3 tools/minamorl/build_linux_primary.py --check-whitespace

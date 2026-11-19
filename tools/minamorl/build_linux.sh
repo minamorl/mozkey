@@ -23,9 +23,20 @@ case "$mode" in
     # Upstream preparation uses python (not only python3), Bash and bzip2.
     sudo apt-get update
     sudo apt-get install -y --no-install-recommends python-is-python3 bzip2
-    timeout 45m pwsh -NoLogo -NoProfile -NonInteractive -File "$source_root/tools/dictionary/prepare_daily_dictionary.ps1"
+    profile=$(python3 "$recipe_dir/build_linux_metadata.py" profile "$source_root")
+    producer=$source_root
+    if [[ $profile == upstream-ea2e9f5c-mozc ]]; then
+      # The old immutable source has no input lock/notices. Prepare external
+      # dictionary data in the separate reviewed recipe checkout, never patch it.
+      producer=$(cd "$recipe_dir/../.." && pwd)
+      [[ $producer != "$source_root" ]] || die 'legacy source and dictionary recipe must be separate'
+      [[ $(git -C "$producer" rev-parse HEAD) == "${GITHUB_SHA:?}" ]] || die 'dictionary recipe SHA mismatch'
+      [[ -z $(git -C "$producer" status --porcelain --untracked-files=normal) ]] || die 'dictionary recipe must be clean'
+    fi
+    timeout 45m pwsh -NoLogo -NoProfile -NonInteractive -File "$producer/tools/dictionary/prepare_daily_dictionary.ps1"
+    git -C "$producer" diff --exit-code HEAD --
     git -C "$source_root" diff --exit-code HEAD --
-    python3 "$recipe_dir/build_linux_metadata.py" snapshot "$source_root" "$output"
+    python3 "$recipe_dir/build_linux_metadata.py" snapshot "$source_root" "$output" "$producer"
     ;;
   package)
     [[ $# == 4 ]] || die 'snapshot directory required'
