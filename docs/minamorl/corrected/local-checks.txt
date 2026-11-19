@@ -79,3 +79,26 @@ tree_sha: 8d7172de14c73f01167029dc9e6623a2be0893b3
 changed_paths: ["src/unix/ibus/BUILD.bazel", "src/unix/ibus/mozc_engine.cc", "src/unix/ibus/property_handler.cc", "src/unix/ibus/property_handler.h", "src/unix/ibus/property_handler_test.cc"]
 target/format digest counts: 5 9
 tracked checkout SHA-256: 61f03acd0e993df2f4ce767bf19c54c70b1463d01ff2826deefdbe541cf0cbf7
+
+Bazel lockfile mode and frozen checkout guard
+
+COMMAND: python3 -B -m unittest discover -s tests/minamorl_corrected -p 'test_corrected_producer.py' -k lockfile
+EXIT_CODE: 0
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+OK
+
+COMMAND: python3 -B tests/minamorl_corrected/check_frozen_source.py
+EXIT_CODE: 0
+accepted source_sha: 45682407ee02ce1efbdec0f3a425b31fd3d0bd5a
+tree_sha: 8d7172de14c73f01167029dc9e6623a2be0893b3
+changed_paths: ["src/unix/ibus/BUILD.bazel", "src/unix/ibus/mozc_engine.cc", "src/unix/ibus/property_handler.cc", "src/unix/ibus/property_handler.h", "src/unix/ibus/property_handler_test.cc"]
+target/format digest counts: 5 9
+tracked checkout SHA-256: 61f03acd0e993df2f4ce767bf19c54c70b1463d01ff2826deefdbe541cf0cbf7
+Untracked src/MODULE.bazel.lock rejected: Unexpected untracked path in the corrected source checkout
+Tracked checkout SHA-256 after fixture removal: 61f03acd0e993df2f4ce767bf19c54c70b1463d01ff2826deefdbe541cf0cbf7
+
+COMMAND: git diff --check
+EXIT_CODE: 0

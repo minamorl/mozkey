@@ -17,8 +17,8 @@ from corrected_inputs import (
     sha256_file, source_fingerprint, verify_dataset, verify_fork_checkout, verify_ibus_build, verify_pc_zip,
 )
 from corrected_recipe import (
-    PACKAGE_TARGET, json_object, measure_notices, measure_recipe, public_dataset_cli, recipe_members,
-    verify_embedded_dataset, verify_overlay,
+    LOCKFILE_FLAG, PACKAGE_TARGET, json_object, measure_notices, measure_recipe, public_dataset_cli,
+    recipe_members, release_build_options, verify_embedded_dataset, verify_overlay,
 )
 
 
@@ -40,7 +40,7 @@ def worktree_state(target_dir, sha):
 
 def body_targets(bazel, workspace, registration):
     expression = 'kind("cc_binary rule", deps(//unix:package))'
-    raw = checked_output([bazel, "query", registration, "--noimplicit_deps", "--output=label", expression],
+    raw = checked_output([bazel, "query", registration, LOCKFILE_FLAG, "--noimplicit_deps", "--output=label", expression],
                       cwd=workspace)
     labels = sorted(set(line for line in raw.decode("utf-8").splitlines() if line.startswith("//")))
     if not labels or any(not re.fullmatch(r"//[A-Za-z0-9_/.-]*:[A-Za-z0-9_/.-]+", label) for label in labels):
@@ -139,7 +139,7 @@ def build_outputs(args, trace, root, ea2, target_dir, control_dir, target, packa
     digests = verify_overlay(ea2, target_dir, overlay, overlay_state)
 
     registration = f"--package_path={overlay}:%workspace%"
-    build_options = ["--config=release_build", registration, "--strip=never"]
+    build_options = release_build_options(registration)
     workspace = target_dir / "src"
     events = root / "corrected-test-events.json"
     job = job_identity(args.system, args.run_id, args.job_id, recipe)
