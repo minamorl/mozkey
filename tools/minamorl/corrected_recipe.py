@@ -34,6 +34,7 @@ OVERLAY_FLAG = "--package_path=$RUNNER_TEMP/dataset-overlay:%workspace%"
 ORIGINAL_BUILD = "src/data_manager/oss/BUILD.bazel"
 ENCODER = "src/build_tools/embed_file.py"
 PACKAGE_TARGET = "//:package"
+LOCKFILE_FLAG = "--lockfile_mode=off"
 RECIPE_MEMBERS = {
     "recipe/original-BUILD.bazel": "original_build_sha256",
     "recipe/overlay-BUILD.bazel": "overlay_build_sha256",
@@ -93,6 +94,10 @@ def verify_overlay(ea2, target, overlay, record):
     return expected
 
 
+def release_build_options(registration):
+    return ("--config=release_build", registration, "--strip=never", LOCKFILE_FLAG)
+
+
 def measure_recipe(control, source_sha, bazel):
     require_commit(source_sha)
     current = git(control, "rev-parse", "--verify", "HEAD^{commit}").stdout.decode().strip()
@@ -114,7 +119,7 @@ def measure_recipe(control, source_sha, bazel):
         "repository": REPOSITORY,
         "source_sha": source_sha,
         "tree_sha": require_commit(tree),
-        "command": f"{Path(bazel).name} build --config=release_build {OVERLAY_FLAG} --strip=never {PACKAGE_TARGET}",
+        "command": " ".join((Path(bazel).name, "build", *release_build_options(OVERLAY_FLAG), PACKAGE_TARGET)),
         "files_sha256": files,
     }
 

@@ -11,7 +11,7 @@ import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from zipfile import ZipFile, ZipInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools" / "minamorl"))
@@ -35,6 +35,37 @@ class ProducerTest(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
         return path
+
+    def test_lockfile_mode_is_off_for_all_bazel_invocations_and_the_recipe(self):
+        control_sha = "1" * 40
+        files = {
+            name: inputs.sha256_file(self.write(name, b"recipe fixture"))
+            for name in (recipe.DATASET_CLI, recipe.METADATA_CLI, recipe.SOURCES_LOCK)
+        }
+        with patch.object(recipe, "git", return_value=SimpleNamespace(stdout=control_sha.encode())), \
+             patch.object(recipe, "tree_entries"), patch.object(recipe, "blob_digests", return_value=files):
+            recorded_recipe = recipe.measure_recipe(self.root, control_sha, "bazelisk")
+
+        checked = Mock(side_effect=[b"", b"//unix/ibus:engine\n"])
+        run = Mock(side_effect=lambda argv, **_: subprocess.CompletedProcess(argv, 0, stdout=b"{}"))
+        args = SimpleNamespace(system="x86_64-linux", run_id="123", job_id="456", bazel="bazelisk", control_sha=control_sha)
+        with patch.multiple(
+            build, checked_output=checked, run_command=run, verify_pc_zip=Mock(),
+            public_dataset_cli=Mock(return_value=b"{}"), verify_dataset=Mock(),
+            measure_notices=Mock(return_value={}), verify_overlay=Mock(return_value={}),
+            worktree_state=Mock(return_value="2" * 64), require_executed_test=Mock(),
+            measure_recipe=Mock(return_value=recorded_recipe), emit=Mock(), build_metadata=Mock(),
+            make_archive=Mock(), recipe_members=Mock(),
+        ):
+            build.build_outputs(args, evidence.trace_id(), self.root, self.root, self.root,
+                                self.root, {"source_sha": "3" * 40, "tree_sha": "4" * 40}, {}, recorded_recipe)
+
+        argv = [checked.call_args_list[1].args[0], *(call.args[0] for call in run.call_args_list[:3])]
+        self.assertEqual(["query", "test", "build", "build"], [command[1] for command in argv])
+        for command in argv:
+            self.assertEqual(["--lockfile_mode=off"], [arg for arg in command if arg.startswith("--lockfile_mode=")])
+        actual_package = shlex.join(argv[-1]).replace(str(self.root / "dataset-overlay"), "$RUNNER_TEMP/dataset-overlay")
+        self.assertEqual(actual_package, recorded_recipe["command"])
 
     def test_overlay_checks_published_receipt_against_ea2_target_and_generated_bytes(self):
         ea2, target, overlay = (self.root / name for name in ("ea2", "target", "overlay"))

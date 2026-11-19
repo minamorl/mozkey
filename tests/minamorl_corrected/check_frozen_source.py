@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools" / "minamorl"))
 
 from corrected_build import worktree_state
-from corrected_inputs import FORK_URL, measure_target, verify_fork_checkout, verify_ibus_build
+from corrected_inputs import FORK_URL, InputError, measure_target, verify_fork_checkout, verify_ibus_build
 
 
 SOURCE = "45682407ee02ce1efbdec0f3a425b31fd3d0bd5a"
@@ -33,7 +33,24 @@ def main():
         print("tree_sha:", measured["tree_sha"])
         print("changed_paths:", json.dumps(measured["changed_paths"]))
         print("target/format digest counts:", len(measured["files_sha256"]), len(package["source_files_sha256"]))
-        print("tracked checkout SHA-256:", worktree_state(target, SOURCE))
+        fingerprint = worktree_state(target, SOURCE)
+        print("tracked checkout SHA-256:", fingerprint)
+        lockfile = target / "src" / "MODULE.bazel.lock"
+        with lockfile.open("xb") as fixture:
+            fixture.write(b"{}\n")
+        try:
+            worktree_state(target, SOURCE)
+        except InputError as error:
+            if str(error) != "Unexpected untracked path in the corrected source checkout":
+                raise
+            print(f"Untracked src/MODULE.bazel.lock rejected: {error}")
+        else:
+            raise ValueError("The source guard accepted an untracked lockfile")
+        finally:
+            lockfile.unlink()
+        if worktree_state(target, SOURCE) != fingerprint:
+            raise ValueError("The frozen checkout fingerprint changed")
+        print("Tracked checkout SHA-256 after fixture removal:", fingerprint)
 
 
 if __name__ == "__main__":
