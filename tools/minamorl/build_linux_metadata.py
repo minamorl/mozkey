@@ -13,6 +13,7 @@ import sys
 from datetime import datetime, timezone
 import zipfile
 import build_linux_compat as compat
+import build_linux_dataset as pcdata
 
 
 DICTIONARIES = (
@@ -167,10 +168,58 @@ def snapshot(root, output, producer=None):
     validate_snapshot(root, output, sha256(output / 'dictionary.json'))
 
 
+def pc_snapshot(root, output, existing):
+    revision = git(root, 'rev-parse', 'HEAD').decode().strip()
+    require(revision == pcdata.SOURCE_SHA, 'PC data reuse requires unchanged EA2 source')
+    receipt = pcdata.verify(existing)
+    layout = source_format(root, revision)
+    notices, origins = selected_notices(root, revision)
+    output.mkdir()
+    for name in ('mozc.data', 'pos_list.data', 'dataset.json'):
+        shutil.copyfile(existing / name, output / name)
+    notice_metadata = write_notices(output, notices, origins)
+    write_json(output / 'dictionary.json', {
+        'schema_version': 4, 'profile': 'pc-embedded', 'source_sha': revision,
+        'build_inputs_sha256': inputs_sha(root), 'package_format': layout,
+        'dataset': receipt, 'pc_zip_url': pcdata.PC_ZIP_URL,
+        'notices': {'source_sha': revision, 'files': notice_metadata},
+    })
+    (output / 'SHA256SUMS').write_text(checksums(output))
+    validate_snapshot(root, output, sha256(output / 'dictionary.json'))
+
+
+def validate_pc_snapshot(root, directory, data):
+    revision = git(root, 'rev-parse', 'HEAD').decode().strip()
+    require(data['schema_version'] == 4 and data['profile'] == 'pc-embedded'
+            and revision == data['source_sha'] == pcdata.SOURCE_SHA, 'PC snapshot source/schema differs')
+    require(data['package_format'] == source_format(root, revision)
+            and data['build_inputs_sha256'] == inputs_sha(root), 'PC snapshot source/format differs')
+    expected = {'mozc.data', 'pos_list.data', 'dataset.json', 'dictionary.json', 'documents', 'SHA256SUMS'}
+    require({p.name for p in directory.iterdir()} == expected, 'unexpected PC snapshot payload')
+    for name in expected - {'documents'}:
+        require((directory / name).is_file() and not (directory / name).is_symlink(), 'PC snapshot requires regular files')
+    require(data['dataset'] == pcdata.verify(directory) and data['pc_zip_url'] == pcdata.PC_ZIP_URL, 'PC dataset receipt differs')
+    notices, origins = selected_notices(root, revision)
+    doc = directory / 'documents'
+    require(doc.is_dir() and not doc.is_symlink() and {p.name for p in doc.iterdir()} == set(NOTICES), 'PC notice set differs')
+    require(data['notices']['source_sha'] == revision and set(data['notices']['files']) == {
+        f'documents/{name}' for name in NOTICES}, 'PC notice manifest differs')
+    for name, source_path in NOTICES.items():
+        path = doc / name
+        expected_record = {'source_path': source_path, 'sha256': hashlib.sha256(notices[name]).hexdigest(),
+                           **origins[f'documents/{name}']}
+        require(path.is_file() and not path.is_symlink() and sha256(path) == expected_record['sha256']
+                and data['notices']['files'][f'documents/{name}'] == expected_record, 'PC notice bytes/origin differs')
+    require((directory / 'SHA256SUMS').read_text() == checksums(directory), 'PC snapshot checksums differ')
+    return data
+
+
 def validate_snapshot(root, directory, expected):
     require(re.fullmatch('[0-9a-f]{64}', expected), 'snapshot SHA256 required')
     require(sha256(directory / 'dictionary.json') == expected, 'snapshot manifest hash mismatch')
     data = json.loads((directory / 'dictionary.json').read_text())
+    if data.get('profile') == 'pc-embedded':
+        return validate_pc_snapshot(root, directory, data)
     revision = git(root, 'rev-parse', 'HEAD').decode().strip()
     legacy = revision == compat.SOURCE_SHA
     require(data['schema_version'] == (3 if legacy else 2) and data['profile'] == 'daily', 'unknown dictionary profile/schema')
@@ -219,7 +268,12 @@ def validate_snapshot(root, directory, expected):
 
 
 def restore(root, directory, expected):
-    validate_snapshot(root, directory, expected)
+    data = validate_snapshot(root, directory, expected)
+    if data['profile'] == 'pc-embedded':
+        destination = Path(os.environ['RUNNER_TEMP']) / 'dataset-overlay'
+        record = pcdata.overlay(root, directory, destination)
+        write_json(destination / 'overlay.json', record)
+        return
     target = root / GENERATED
     target.mkdir(parents=True, exist_ok=True)
     for name in DICTIONARIES:
@@ -327,21 +381,32 @@ def package(root, output, directory, arch):
     expected = os.environ['EXPECTED_DICTIONARY_SHA256']
     dictionary = validate_snapshot(root, directory, expected)
     # Validate bytes actually passed to Bazel, not just the downloaded snapshot.
-    for name in DICTIONARIES:
-        require(sha256(root / GENERATED / name) == dictionary['files'][name], 'build dictionary changed')
+    reused = dictionary['profile'] == 'pc-embedded'
+    if not reused:
+        for name in DICTIONARIES:
+            require(sha256(root / GENERATED / name) == dictionary['files'][name], 'build dictionary changed')
     source_sha = git(root, 'rev-parse', 'HEAD').decode().strip()
     require(source_sha == os.environ['EXPECTED_SOURCE_SHA'], 'built source SHA mismatch')
     archive = root / 'src/bazel-bin/unix/mozc.zip'
     layout = source_format(root, source_sha)
     names = inspect_archive(archive, arch, layout['name'])
+    reuse_evidence = None
+    if reused:
+        overlay_root = Path(os.environ['RUNNER_TEMP']) / 'dataset-overlay'
+        reuse_evidence = json.loads((overlay_root / 'overlay.json').read_text())
+        for name, digest in reuse_evidence['files_sha256'].items():
+            require(sha256(overlay_root / 'data_manager/oss' / name) == digest, 'dataset overlay input changed during build')
+        reuse_evidence['embedded'] = pcdata.verify_package(archive, {'x86_64': 62, 'aarch64': 183}[arch])
     notices, origins = selected_notices(root, source_sha)
     output.mkdir()
     shutil.copyfile(archive, output / 'mozc.zip')
     shutil.copyfile(directory / 'dictionary.json', output / 'dictionary.json')
-    shutil.copyfile(directory / 'daily_sources.json', output / 'daily_sources.json')
+    sidecar = 'dataset.json' if reused else 'daily_sources.json'
+    shutil.copyfile(directory / sidecar, output / sidecar)
     notice_metadata = write_notices(output, notices, origins)
     recipe_root = Path(__file__).resolve().parents[2]
     recipe_paths = ['tools/minamorl/build_linux.sh', 'tools/minamorl/build_linux_metadata.py',
+                    'tools/minamorl/build_linux_dataset.py',
                     'tools/minamorl/build_linux_compat.py', 'tools/minamorl/build_linux_ea2e9f5c_sources.json',
                     '.github/workflows/minamorl-linux-build.yml']
     recipe = {p: sha256(recipe_root / p) for p in recipe_paths}
@@ -357,6 +422,9 @@ def package(root, output, directory, arch):
         'run_id': os.environ['GITHUB_RUN_ID'], 'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
         'created_at_utc': datetime.now(timezone.utc).isoformat(),
     }
+    if reused:
+        metadata['dictionary_reuse'] = reuse_evidence
+        metadata['build_recipe']['command'] += ' --package_path=$RUNNER_TEMP/dataset-overlay:%workspace% --strip=never'
     write_json(output / 'metadata.json', metadata)
     (output / 'archive-files.txt').write_text('\n'.join(names) + '\n')
     versions = subprocess.check_output(['dpkg-query', '--show', 'libibus-1.0-dev', 'qt6-base-dev', 'gcc', 'libc6', 'python3', 'pkg-config'])
@@ -373,6 +441,8 @@ def main():
     elif command == 'profile':
         root = Path(args[0])
         print(source_format(root, git(root, 'rev-parse', 'HEAD').decode().strip())['name'])
+    elif command == 'pc-snapshot':
+        pc_snapshot(*map(Path, args))
     elif command == 'restore':
         restore(Path(args[0]), Path(args[1]), args[2])
     elif command == 'package':

@@ -1,0 +1,100 @@
+COMMAND: git init -q /Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo
+EXIT_CODE: 0
+COMMAND: git add --all
+EXIT_CODE: 0
+COMMAND: /Applications/Xcode.app/Contents/Developer/usr/bin/python3 /Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py --check-whitespace
+{"stdout": "pristine primary source: koyasi777/mozkey@ea2e9f5cfb80fccf50caca1af097b2f0830be52a\nprimary SHA256 c08b90555c2e8d166b043cf92d14bcccd139a483cf41cdfd6cccb646492b1504  .github/workflows/linux.yaml\nprimary SHA256 08ac59def69d2100356fcce7f74a32775bd4c142378689338182f7b5e48999af  src/config.bzl\nprimary SHA256 5abdaa43194aa97593e437dd54a59c1ff3e1937894e980ca3439439f64a65962  src/unix/BUILD.bazel\nprimary SHA256 fa05a3838125a479375e6d11d72bbf8767d916b7f05e2ae1ca57ad8372aaaa19  src/unix/build_package.py\nprimary SHA256 c0a349680b64aafa4f1b08d296dfb16b4110e52384ce7f35334c9850bb536a91  src/unix/build_icons.py\nprimary SHA256 59acd943a0d15254345f3e176f42786af2b4fba83b1657341cf56e017a7db19a  src/.bazeliskrc\nprimary SHA256 a0cc21085ed84db13fffdb95e7ce4be88395f71293946feeab95b8fabddc3b1a  src/data/dictionary_koyasi/BUILD.bazel\nprimary SHA256 dfbe4196c50c956c7abc33c902a80f0babaaad347d393c25c608a9f8cec3956a  src/data/dictionary_oss/BUILD.bazel\nprimary SHA256 e8fabab2bc690830b26b7cab28e0a6fefd3c5ef6ad05fd6714088158d9ff2138  src/unix/ibus/gen_mozc_xml.py\nprimary SHA256 a7eed3629173574207210a685a808a627c6cd88b3d2c96e891b57a9ee89aeffc  src/unix/ibus/BUILD.bazel\nprimary SHA256 21a18e3b44935e540162ce2a628b938cd764b1fa692a444bfc0afab0d7ccd7e5  tools/dictionary/prepare_daily_dictionary.ps1\nprimary SHA256 bcc93a01c5ee88c8e85f12e2ef4a91657d97e1c83838695062edae418835fdb3  docs/build_mozc_for_linux.md\nprimary SHA256 e1bc0a70491f19f5acc7edcae23a1aa5c3b317009246837abd04e0f436c87c46  THIRD_PARTY_NOTICES.md\nprimary SHA256 44cdd923b91ea9199293abecc2762c70c87dbf1e581c027a94c416368d1a648c  LICENSE\nprimary SHA256 aae12cc9db479d937f294f1afeed0935ef05d57a1e1d4256e0900957b19df0ad  src/data/installer/credits_en.html\nTraceback (most recent call last):\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 101, in <module>\n    main()\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 81, in main\n    check_whitespace()\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 57, in check_whitespace\n    verify(primary)\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 48, in verify\n    raise ValueError(f'primary source bytes differ: {name}')\nValueError: primary source bytes differ: src/data/dictionary_oss/README.txt\n"}
+EXIT_CODE: 1
+COMMAND: /Applications/Xcode.app/Contents/Developer/usr/bin/python3 /Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py --check-whitespace
+{"stdout": "Traceback (most recent call last):\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 101, in <module>\n    main()\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 81, in main\n    check_whitespace()\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 57, in check_whitespace\n    verify(primary)\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 29, in verify\n    raise ValueError('primary source manifest differs from the reviewed fixed hash')\nValueError: primary source manifest differs from the reviewed fixed hash\n"}
+EXIT_CODE: 1
+COMMAND: /Applications/Xcode.app/Contents/Developer/usr/bin/python3 /Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py --check-whitespace
+{"stdout": "Traceback (most recent call last):\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 101, in <module>\n    main()\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 81, in main\n    check_whitespace()\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 57, in check_whitespace\n    verify(primary)\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 43, in verify\n    raise ValueError('primary source payload file set differs')\nValueError: primary source payload file set differs\n"}
+EXIT_CODE: 1
+COMMAND: /Applications/Xcode.app/Contents/Developer/usr/bin/python3 /Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py --check-whitespace
+{"stdout": "pristine primary source: koyasi777/mozkey@ea2e9f5cfb80fccf50caca1af097b2f0830be52a\nprimary SHA256 c08b90555c2e8d166b043cf92d14bcccd139a483cf41cdfd6cccb646492b1504  .github/workflows/linux.yaml\nprimary SHA256 08ac59def69d2100356fcce7f74a32775bd4c142378689338182f7b5e48999af  src/config.bzl\nprimary SHA256 5abdaa43194aa97593e437dd54a59c1ff3e1937894e980ca3439439f64a65962  src/unix/BUILD.bazel\nprimary SHA256 fa05a3838125a479375e6d11d72bbf8767d916b7f05e2ae1ca57ad8372aaaa19  src/unix/build_package.py\nprimary SHA256 c0a349680b64aafa4f1b08d296dfb16b4110e52384ce7f35334c9850bb536a91  src/unix/build_icons.py\nprimary SHA256 59acd943a0d15254345f3e176f42786af2b4fba83b1657341cf56e017a7db19a  src/.bazeliskrc\nprimary SHA256 a0cc21085ed84db13fffdb95e7ce4be88395f71293946feeab95b8fabddc3b1a  src/data/dictionary_koyasi/BUILD.bazel\nprimary SHA256 dfbe4196c50c956c7abc33c902a80f0babaaad347d393c25c608a9f8cec3956a  src/data/dictionary_oss/BUILD.bazel\nprimary SHA256 e8fabab2bc690830b26b7cab28e0a6fefd3c5ef6ad05fd6714088158d9ff2138  src/unix/ibus/gen_mozc_xml.py\nprimary SHA256 a7eed3629173574207210a685a808a627c6cd88b3d2c96e891b57a9ee89aeffc  src/unix/ibus/BUILD.bazel\nprimary SHA256 21a18e3b44935e540162ce2a628b938cd764b1fa692a444bfc0afab0d7ccd7e5  tools/dictionary/prepare_daily_dictionary.ps1\nprimary SHA256 bcc93a01c5ee88c8e85f12e2ef4a91657d97e1c83838695062edae418835fdb3  docs/build_mozc_for_linux.md\nprimary SHA256 e1bc0a70491f19f5acc7edcae23a1aa5c3b317009246837abd04e0f436c87c46  THIRD_PARTY_NOTICES.md\nprimary SHA256 44cdd923b91ea9199293abecc2762c70c87dbf1e581c027a94c416368d1a648c  LICENSE\nprimary SHA256 aae12cc9db479d937f294f1afeed0935ef05d57a1e1d4256e0900957b19df0ad  src/data/installer/credits_en.html\nprimary SHA256 6b1de66bc6fa30e0b45dc45b8c8f6c57bd78aff923c261a3efffac8eb86f7bac  src/data/dictionary_oss/README.txt\nprimary SHA256 cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  src/win32/installer/zenz_runtime/licenses/Apache-2.0.txt\nTraceback (most recent call last):\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 101, in <module>\n    main()\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 81, in main\n    check_whitespace()\n  File \"/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_primary.py\", line 74, in check_whitespace\n    raise ValueError(f'owned whitespace check failed: {path.relative_to(repo)}\\n{result.stdout}')\nValueError: owned whitespace check failed: tools/minamorl/build_linux_owned_fixture/nested.py\n/Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_owned_fixture/nested.py:1: trailing whitespace.\n+value = 1 \n\n"}
+EXIT_CODE: 1
+COMMAND: bash /Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/mozkey-public-gate-9dt4fp3x/repo/tools/minamorl/build_linux_check.sh /Users/minamorl/repos/.worktrees/mozkey/mozkey-linux-ci-20261119/dist/minamorl-ci-tmp/check.UyIC8I/actionlint
+1.7.12
+installed by downloading from release page
+built with go1.26.1 compiler for darwin/arm64
+actionlint: exit 0
+shellcheck and bash -n: exit 0
+test_archive_accepts_native_layout_for_each_arch (__main__.ProvenanceTest) ... ok
+test_bazelignore_and_tracked_lock_additions_and_changes_are_rejected (__main__.ProvenanceTest) ... ok
+test_changed_config_or_lock_fails (__main__.ProvenanceTest) ... ok
+test_dictionary_generator_code_change_is_rejected (__main__.ProvenanceTest) ... ok
+test_elf_without_executable_or_pie_type_is_rejected (__main__.ProvenanceTest) ... ok
+test_existing_packager_icon_subdirectories_are_accepted (__main__.ProvenanceTest) ... ok
+test_normalized_zip_duplicates_and_file_directory_conflicts_are_rejected (__main__.ProvenanceTest) ... ok
+test_package_records_archive_identity_without_environment_secrets (__main__.ProvenanceTest) ... ok
+test_plan_rejects_refs_and_duplicate_control (__main__.ProvenanceTest) ... ok
+test_renderer_target_build_configuration_change_is_rejected (__main__.ProvenanceTest) ... ok
+test_restore_exact_snapshot_and_refuse_overwrite (__main__.ProvenanceTest) ... ok
+test_separate_ci_recipe_can_be_added_without_changing_build_inputs (__main__.ProvenanceTest) ... ok
+test_snapshot_includes_target_notices_and_verified_checksums (__main__.ProvenanceTest) ... ok
+test_snapshot_rejects_tampered_missing_extra_or_linked_notices (__main__.ProvenanceTest) ... ok
+test_source_notices_reject_missing_and_empty_documents (__main__.ProvenanceTest) ... ok
+test_tampered_manifest_payload_and_extra_file_fail (__main__.ProvenanceTest) ... ok
+test_ui_only_revision_keeps_dictionary_identity (__main__.ProvenanceTest) ... ok
+test_wrong_elf_missing_binary_and_unknown_layout_fail (__main__.ProvenanceTest) ... ok
+test_zip_traversal_symlink_and_duplicate_fail (__main__.ProvenanceTest) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 11.732s
+
+OK
+provenance recipe tests: exit 0
+test_all_native_elfs_including_emacs_and_component_are_checked (__main__.CompatibilityTest) ... ok
+test_current_format_and_schema_stay_strict (__main__.CompatibilityTest) ... ok
+test_inner_and_installed_icons_must_match (__main__.CompatibilityTest) ... ok
+test_mixed_unknown_traversal_and_symlink_payloads_rejected (__main__.CompatibilityTest) ... ok
+test_official_source_hashes_and_native_old_packages (__main__.CompatibilityTest) ... ok
+test_package_provenance_preserves_original_archive (__main__.CompatibilityTest) ... ok
+test_separate_locked_snapshot_and_source_remain_unchanged (__main__.CompatibilityTest) ... ok
+test_source_or_format_change_is_rejected (__main__.CompatibilityTest) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.489s
+
+OK
+unpatched PC revision compatibility fixtures: exit 0
+test_built_arm_dataset_hash_is_required (__main__.DataReuseTest) ... ok
+test_dataset_padding_is_zero_and_minimal (__main__.DataReuseTest) ... ok
+test_footer_metadata_and_corruption (__main__.DataReuseTest) ... ok
+test_overlay_does_not_invoke_dataset_macro_or_change_source (__main__.DataReuseTest) ... ok
+test_pos_and_native_elf_boundaries (__main__.DataReuseTest) ... ok
+test_pos_padding_is_zero_and_minimal (__main__.DataReuseTest) ... ok
+test_postbuild_rejects_impossible_symbol_sizes (__main__.DataReuseTest) ... ok
+test_public_dictionary_step_never_generates (__main__.DataReuseTest) ... ok
+test_snapshot_notice_and_hash_rejection (__main__.DataReuseTest) ... ok
+test_snapshot_restore_and_package_provenance (__main__.DataReuseTest) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.623s
+
+OK
+existing PC dataset reuse fixtures: exit 0
+wrong-repository: exit 1; ERROR: fork Actions runner required
+not-actions: exit 1; ERROR: fork Actions runner required
+fork and Actions guard assertions: exit 0
+pristine primary source: koyasi777/mozkey@ea2e9f5cfb80fccf50caca1af097b2f0830be52a
+primary SHA256 c08b90555c2e8d166b043cf92d14bcccd139a483cf41cdfd6cccb646492b1504  .github/workflows/linux.yaml
+primary SHA256 08ac59def69d2100356fcce7f74a32775bd4c142378689338182f7b5e48999af  src/config.bzl
+primary SHA256 5abdaa43194aa97593e437dd54a59c1ff3e1937894e980ca3439439f64a65962  src/unix/BUILD.bazel
+primary SHA256 fa05a3838125a479375e6d11d72bbf8767d916b7f05e2ae1ca57ad8372aaaa19  src/unix/build_package.py
+primary SHA256 c0a349680b64aafa4f1b08d296dfb16b4110e52384ce7f35334c9850bb536a91  src/unix/build_icons.py
+primary SHA256 59acd943a0d15254345f3e176f42786af2b4fba83b1657341cf56e017a7db19a  src/.bazeliskrc
+primary SHA256 a0cc21085ed84db13fffdb95e7ce4be88395f71293946feeab95b8fabddc3b1a  src/data/dictionary_koyasi/BUILD.bazel
+primary SHA256 dfbe4196c50c956c7abc33c902a80f0babaaad347d393c25c608a9f8cec3956a  src/data/dictionary_oss/BUILD.bazel
+primary SHA256 e8fabab2bc690830b26b7cab28e0a6fefd3c5ef6ad05fd6714088158d9ff2138  src/unix/ibus/gen_mozc_xml.py
+primary SHA256 a7eed3629173574207210a685a808a627c6cd88b3d2c96e891b57a9ee89aeffc  src/unix/ibus/BUILD.bazel
+primary SHA256 21a18e3b44935e540162ce2a628b938cd764b1fa692a444bfc0afab0d7ccd7e5  tools/dictionary/prepare_daily_dictionary.ps1
+primary SHA256 bcc93a01c5ee88c8e85f12e2ef4a91657d97e1c83838695062edae418835fdb3  docs/build_mozc_for_linux.md
+primary SHA256 e1bc0a70491f19f5acc7edcae23a1aa5c3b317009246837abd04e0f436c87c46  THIRD_PARTY_NOTICES.md
+primary SHA256 44cdd923b91ea9199293abecc2762c70c87dbf1e581c027a94c416368d1a648c  LICENSE
+primary SHA256 aae12cc9db479d937f294f1afeed0935ef05d57a1e1d4256e0900957b19df0ad  src/data/installer/credits_en.html
+primary SHA256 6b1de66bc6fa30e0b45dc45b8c8f6c57bd78aff923c261a3efffac8eb86f7bac  src/data/dictionary_oss/README.txt
+primary SHA256 cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  src/win32/installer/zenz_runtime/licenses/Apache-2.0.txt
+owned regular-file whitespace checks (recursive, including untracked): exit 0
+EXIT_CODE: 0

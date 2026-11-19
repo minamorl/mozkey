@@ -15,6 +15,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 tools/minamorl/build_linux_test.py
 echo 'provenance recipe tests: exit 0'
 PYTHONDONTWRITEBYTECODE=1 python3 tools/minamorl/build_linux_compat_test.py
 echo 'unpatched PC revision compatibility fixtures: exit 0'
+PYTHONDONTWRITEBYTECODE=1 python3 tools/minamorl/build_linux_dataset_test.py
+echo 'existing PC dataset reuse fixtures: exit 0'
 for guard_case in wrong-repository not-actions; do
   if [[ $guard_case == wrong-repository ]]; then
     actions=true

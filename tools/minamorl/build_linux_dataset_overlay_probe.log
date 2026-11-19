@@ -1,0 +1,14 @@
+{
+  "encoder_sha256": "0d7fe3d6616f8dc742f8f9c0559a5ac8cdeb5c8ef33577df52d09cbed0996b28",
+  "files_sha256": {
+    "BUILD.bazel": "f5cbbd3ace07d00d534fa32698ba35143aa993a21f54ef81b9af178e3053c324",
+    "mozc.data": "9ef432c90b46b60aa7cd022176edc8e4b922c5855a1b6c8801a04e822683a4f8",
+    "mozc_data.inc": "0ec333d132b2b56542a610862666644a54f2bcf7d1215be7f1befdfb1036a4a8",
+    "oss_data_manager.cc": "defdbdba4e4539be09090f3d5588c46c82355f05f7cdb21fe15f8e8c18d17bd3",
+    "oss_data_manager.h": "66cc4851c1886a11cfdf7ed60493896e56b71f95a102eceabbda2a7fccf33877",
+    "pos_list.inc": "5216b9bd23b999b8c4555a9a8783c216a399b2eedf6f256cc2d8f4c9d49e5f0e"
+  },
+  "flag": "--package_path=$RUNNER_TEMP/dataset-overlay:%workspace%",
+  "original_build_sha256": "115db49f3f2ed7fd947bf5ee26df4b281c63ccb1e5b36b800cb248dddd31bc6e",
+  "overlay_build_sha256": "f5cbbd3ace07d00d534fa32698ba35143aa993a21f54ef81b9af178e3053c324"
+}
