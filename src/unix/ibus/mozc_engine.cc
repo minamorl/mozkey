@@ -419,8 +419,10 @@ bool MozcEngine::ProcessKeyEvent(IbusEngineWrapper* engine, uint keyval,
 void MozcEngine::PropertyActivate(IbusEngineWrapper* engine,
                                   const char* property_name,
                                   uint property_state) {
-  property_handler_->ProcessPropertyActivate(engine, property_name,
-                                             property_state);
+  if (auto output = property_handler_->ProcessPropertyActivate(property_name,
+                                                              property_state)) {
+    UpdateAll(engine, *output);
+  }
 }
 
 void MozcEngine::PropertyHide(IbusEngineWrapper* engine,
