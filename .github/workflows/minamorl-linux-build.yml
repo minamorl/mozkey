@@ -1,0 +1,125 @@
+name: Minamorl manual Linux packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Full fork commit SHA to build (fix or initial feasibility build)
+        required: true
+        type: string
+      control_sha:
+        description: Optional full control SHA; shares the exact dictionary snapshot
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: minamorl-linux-packages
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  dictionary:
+    if: github.repository == 'minamorl/mozkey' && github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    outputs:
+      sources: ${{ steps.plan.outputs.sources }}
+      snapshot_sha256: ${{ steps.snapshot.outputs.sha256 }}
+    steps:
+      - name: Checkout reviewed build recipe
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: minamorl/mozkey
+          ref: ${{ github.sha }}
+          path: recipe
+          persist-credentials: false
+      - name: Validate immutable source inputs
+        id: plan
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          CONTROL_SHA: ${{ inputs.control_sha }}
+        run: |
+          sources=$(python3 recipe/tools/minamorl/build_linux_metadata.py plan "$SOURCE_SHA" "$CONTROL_SHA")
+          echo "sources=$sources" >> "$GITHUB_OUTPUT"
+      - name: Checkout dictionary source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: minamorl/mozkey
+          ref: ${{ inputs.source_sha }}
+          path: source
+          persist-credentials: false
+      - name: Prepare and verify locked daily snapshot with target-source notices
+        timeout-minutes: 50
+        run: bash recipe/tools/minamorl/build_linux.sh dictionary "$GITHUB_WORKSPACE/source" "$RUNNER_TEMP/dictionary"
+      - name: Identify dictionary snapshot
+        id: snapshot
+        run: |
+          digest=$(sha256sum "$RUNNER_TEMP/dictionary/dictionary.json" | cut -d ' ' -f 1)
+          echo "sha256=$digest" >> "$GITHUB_OUTPUT"
+      - name: Upload verified dictionary, target-source notices and manifest
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: minamorl-linux-dictionary
+          path: ${{ runner.temp }}/dictionary/
+          if-no-files-found: error
+          retention-days: 7
+
+  build:
+    needs: dictionary
+    if: github.repository == 'minamorl/mozkey' && github.event.repository.private == false
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        source: ${{ fromJSON(needs.dictionary.outputs.sources) }}
+        platform:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.platform.runner }}
+    timeout-minutes: 100
+    steps:
+      - name: Checkout reviewed build recipe
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: minamorl/mozkey
+          ref: ${{ github.sha }}
+          path: recipe
+          persist-credentials: false
+      - name: Checkout exact build source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: minamorl/mozkey
+          ref: ${{ matrix.source.sha }}
+          path: source
+          persist-credentials: false
+      - name: Download shared dictionary snapshot
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: minamorl-linux-dictionary
+          path: ${{ runner.temp }}/dictionary
+      - name: Build and verify native package
+        timeout-minutes: 90
+        env:
+          EXPECTED_SOURCE_SHA: ${{ matrix.source.sha }}
+          EXPECTED_ARCH: ${{ matrix.platform.arch }}
+          EXPECTED_DICTIONARY_SHA256: ${{ needs.dictionary.outputs.snapshot_sha256 }}
+        run: |
+          bash recipe/tools/minamorl/build_linux.sh package \
+            "$GITHUB_WORKSPACE/source" "$RUNNER_TEMP/package" "$RUNNER_TEMP/dictionary"
+      - name: Upload verified package, target-source notices and provenance
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: mozkey-linux-${{ matrix.platform.arch }}-${{ matrix.source.label }}-${{ matrix.source.sha }}
+          path: ${{ runner.temp }}/package/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
