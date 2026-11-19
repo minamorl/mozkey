@@ -385,6 +385,12 @@ void PropertyHandler::UpdateCompositionModeIcon(
 
 std::optional<commands::Output> PropertyHandler::SetCompositionMode(
     commands::CompositionMode composition_mode) {
+  const bool turn_off = composition_mode == kImeOffCompositionMode;
+  // SWITCH_COMPOSITION_MODE(DIRECT) is unsupported by the session. Repeated
+  // checked Direct notifications must not send it or replay a previous commit.
+  if (turn_off && !is_activated_) {
+    return std::nullopt;
+  }
   commands::SessionCommand command;
   commands::Output output;
 
@@ -394,15 +400,28 @@ std::optional<commands::Output> PropertyHandler::SetCompositionMode(
   // IMEOn. This setting can be configured with setting
   // kMozcEnginePropertyIMEOffState. If kMozcEnginePropertyIMEOffState is
   // nullptr, it means current IME should not be off.
-  if (is_activated_ && composition_mode == kImeOffCompositionMode) {
+  if (turn_off) {
     command.set_type(commands::SessionCommand::TURN_OFF_IME);
     command.set_composition_mode(original_composition_mode_);
   } else {
     command.set_type(commands::SessionCommand::SWITCH_COMPOSITION_MODE);
     command.set_composition_mode(composition_mode);
   }
-  if (!client_->SendCommand(command, &output) || !output.has_status()) {
-    LOG(ERROR) << "Composition mode command failed";
+  if (!client_->SendCommand(command, &output)) {
+    LOG(ERROR) << "Composition mode transport failed";
+    return std::nullopt;
+  }
+  // SessionHandler reports transport success even when Session rejects a
+  // command. Such a reply may contain only status.undo_available. Require the
+  // complete state actually requested before applying any part of the reply.
+  if (!output.IsInitialized() ||
+      output.error_code() != commands::Output::SESSION_SUCCESS ||
+      !output.has_consumed() || !output.consumed() ||
+      !output.has_status() || !output.status().has_activated() ||
+      !output.status().has_mode() ||
+      output.status().activated() != !turn_off ||
+      output.status().mode() != command.composition_mode()) {
+    LOG(ERROR) << "Invalid composition mode response";
     return std::nullopt;
   }
   // UpdateAll applies the response and calls Update to synchronize mode state.

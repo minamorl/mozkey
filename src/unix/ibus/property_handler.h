@@ -60,8 +60,8 @@ class PropertyHandler {
   void Update(IbusEngineWrapper* engine, const commands::Output& output);
 
   // Returns the mode command response for the engine to apply in full, including
-  // committed text, preedit, candidates and properties. Other properties and
-  // unsuccessful commands do not produce an update.
+  // committed text, preedit, candidates and properties. Other properties,
+  // unsuccessful commands and already-off Direct requests produce no update.
   std::optional<commands::Output> ProcessPropertyActivate(
       const char* property_name, uint property_state);
 
