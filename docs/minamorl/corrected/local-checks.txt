@@ -1,0 +1,81 @@
+mozkey-corrected-ci@1.1 — local verification
+
+COMMAND: python3 -B -m unittest discover -s tests/minamorl_corrected -p 'test_*.py'
+EXIT_CODE: 0
+.....................
+----------------------------------------------------------------------
+Ran 21 tests in 2.507s
+
+OK
+
+COMMAND: python3 -B tests/minamorl_corrected/check_fixed_pc.py
+EXIT_CODE: 0
+EA2 tracked checkout fingerprint: e6e413b01071ccf3e9c6c432e2246da9400e5f89d7bed8c2614275f72708a22f
+PC archive, dataset, POS and receipt SHA-256 verified
+PC embedded dataset and POS verified for ELF machine: 62
+overlay public receipt verified: encoder_sha256, original_build_sha256, overlay_build_sha256
+PC package regular/ELF/non-ELF member counts: 44 5 39
+PC ELF PT_LOAD counts: [2, 2, 2, 2, 2]
+Designated recipe members verified: recipe/embed_file.py, recipe/original-BUILD.bazel, recipe/overlay-BUILD.bazel
+EA2 snapshot notices verified: 7
+
+COMMAND: python3 -B tests/minamorl_corrected/check_frozen_source.py
+EXIT_CODE: 0
+accepted source_sha: 3ae0bfb224dfa6c5cb6dfc125ca5dd8db444f799
+tree_sha: 4fe19196cb1c61e9b03849101623ef3cc6cb0dd4
+changed_paths: ["src/unix/ibus/BUILD.bazel", "src/unix/ibus/mozc_engine.cc", "src/unix/ibus/property_handler.cc", "src/unix/ibus/property_handler.h", "src/unix/ibus/property_handler_test.cc"]
+target/format digest counts: 5 9
+tracked checkout SHA-256: 78e3e81c8c4d1bf325d011916613af44d7bcc3df7ffd2c220048200c592b4bdb
+
+COMMAND: /Users/minamorl/.cc/tmp/Is3GCcsa/mozkey-ci-review.wN941VbW/actionlint .github/workflows/minamorl-linux-corrected.yml
+EXIT_CODE: 0
+
+COMMAND: npm_config_update_notifier=false npm_config_cache="$TMPDIR/corrected-prettier" npx --yes prettier@3.6.2 --no-config --check .github/workflows/minamorl-linux-corrected.yml
+EXIT_CODE: 0
+Checking formatting...
+All matched files use Prettier code style!
+
+COMMAND: bash tools/minamorl/build_linux_check.sh /Users/minamorl/.cc/tmp/Is3GCcsa/mozkey-ci-review.wN941VbW/actionlint
+EXIT_CODE: 0
+primary SHA256 6b1de66bc6fa30e0b45dc45b8c8f6c57bd78aff923c261a3efffac8eb86f7bac  src/data/dictionary_oss/README.txt
+primary SHA256 cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  src/win32/installer/zenz_runtime/licenses/Apache-2.0.txt
+owned regular-file whitespace checks (recursive, including untracked): exit 0
+
+COMMAND: bash tools/minamorl/build_linux_compat_check.sh /Users/minamorl/.cc/tmp/Is3GCcsa/mozkey-ci-review.wN941VbW/actionlint
+EXIT_CODE: 0
+----------------------------------------------------------------------
+Ran 8 tests in 2.019s
+
+OK
+Git-free compatibility fixtures: exit 0
+
+COMMAND: python3 tools/minamorl/build_linux_gate_test.py /Users/minamorl/.cc/tmp/Is3GCcsa/mozkey-ci-review.wN941VbW/actionlint
+EXIT_CODE: 0
+owned regular-file whitespace checks (recursive, including untracked): exit 0
+EXIT_CODE: 0
+
+COMMAND: GIT_OPTIONAL_LOCKS=0 git diff --quiet HEAD -- .
+EXIT_CODE: 0
+
+COMMAND: GIT_OPTIONAL_LOCKS=0 git diff --quiet 2221a65432eda9c71c79ff08e8008dc218720fab HEAD -- tools/minamorl/build_linux_dataset.py tools/minamorl/build_linux_metadata.py tools/minamorl/build_linux_ea2e9f5c_sources.json
+EXIT_CODE: 0
+
+Native Linux build, corrected ELF linkage, CI run/job/artifact IDs and Actions upload/download require the actual CI dispatch.
+
+Bazel failure diagnostics and fixed dispatch source
+
+COMMAND: python3 -B -m unittest discover -s tests/minamorl_corrected -p 'test_corrected_producer.py' -k failure
+EXIT_CODE: 0
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.004s
+
+OK
+
+COMMAND: python3 -B tests/minamorl_corrected/check_frozen_source.py
+EXIT_CODE: 0
+accepted source_sha: 45682407ee02ce1efbdec0f3a425b31fd3d0bd5a
+tree_sha: 8d7172de14c73f01167029dc9e6623a2be0893b3
+changed_paths: ["src/unix/ibus/BUILD.bazel", "src/unix/ibus/mozc_engine.cc", "src/unix/ibus/property_handler.cc", "src/unix/ibus/property_handler.h", "src/unix/ibus/property_handler_test.cc"]
+target/format digest counts: 5 9
+tracked checkout SHA-256: 61f03acd0e993df2f4ce767bf19c54c70b1463d01ff2826deefdbe541cf0cbf7
