@@ -1,0 +1,133 @@
+name: Mozkey corrected Linux producer
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Full SHA of the corrected EA2 descendant in this fork
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    if: github.repository == 'minamorl/mozkey'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check workflow format
+        run: npx --yes prettier@3.6.2 --no-config --check .github/workflows/minamorl-linux-corrected.yml
+
+  corrected:
+    if: github.repository == 'minamorl/mozkey'
+    needs: format
+    name: Corrected ${{ matrix.system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - system: x86_64-linux
+            runner: ubuntu-24.04
+          - system: aarch64-linux
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      actions: read
+    env:
+      CORRECTED_SOURCE_SHA: ${{ inputs.source_sha }}
+      CORRECTED_SYSTEM: ${{ matrix.system }}
+      CORRECTED_JOB_NAME: Corrected ${{ matrix.system }}
+    steps:
+      - name: Validate the dispatch input
+        shell: bash
+        run: |
+          if [[ ! "$CORRECTED_SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo '::error::source_sha must be a full lowercase commit SHA'
+            exit 1
+          fi
+
+      - name: Check out the fixed recipe
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: recipe
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check out the fixed corrected source
+        uses: actions/checkout@v4
+        with:
+          repository: minamorl/mozkey
+          ref: ${{ inputs.source_sha }}
+          path: target
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Resolve the numeric CI job ID
+        id: job-id
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          job_id=$(python3 -B recipe/tools/minamorl/corrected_build.py resolve-job --name "$CORRECTED_JOB_NAME")
+          printf 'value=%s\n' "$job_id" >> "$GITHUB_OUTPUT"
+
+      - name: Install native build and ELF inspection tools
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            binutils build-essential clang libglib2.0-dev libgtk-3-dev libibus-1.0-dev \
+            libx11-dev libxcb-keysyms1-dev libxcb1-dev libxkbcommon-dev pax-utils \
+            pkg-config python3-pyelftools qt6-base-dev qt6-svg-dev unzip zip
+          if ! command -v bazelisk >/dev/null; then
+            mkdir "$RUNNER_TEMP/corrected-bin"
+            GOBIN="$RUNNER_TEMP/corrected-bin" go install github.com/bazelbuild/bazelisk@v1.27.0
+            printf '%s\n' "$RUNNER_TEMP/corrected-bin" >> "$GITHUB_PATH"
+          fi
+
+      - name: Run regression tests and build the corrected archive
+        env:
+          CORRECTED_JOB_ID: ${{ steps.job-id.outputs.value }}
+        shell: bash
+        run: |
+          python3 -B recipe/tools/minamorl/corrected_build.py build \
+            --target target --control recipe --source-sha "$CORRECTED_SOURCE_SHA" \
+            --control-sha "$GITHUB_SHA" --system "$CORRECTED_SYSTEM" \
+            --run-id "$GITHUB_RUN_ID" --job-id "$CORRECTED_JOB_ID" --bazel bazelisk
+
+      - name: Upload the verified outer ZIP
+        id: archive
+        uses: actions/upload-artifact@v7
+        with:
+          path: ${{ runner.temp }}/mozkey-corrected/mozkey-corrected-${{ matrix.system }}.zip
+          archive: false
+          if-no-files-found: error
+
+      - name: Download and measure the published artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ steps.archive.outputs.artifact-id }}
+          ARTIFACT_DIGEST: ${{ steps.archive.outputs.artifact-digest }}
+          CORRECTED_JOB_ID: ${{ steps.job-id.outputs.value }}
+        shell: bash
+        run: |
+          python3 -B recipe/tools/minamorl/corrected_build.py publish-records \
+            --archive "$RUNNER_TEMP/mozkey-corrected/mozkey-corrected-$CORRECTED_SYSTEM.zip" \
+            --downloaded "$RUNNER_TEMP/downloaded-corrected.zip" --output "$RUNNER_TEMP/mozkey-corrected-records" \
+            --source-sha "$CORRECTED_SOURCE_SHA" --control-sha "$GITHUB_SHA" --system "$CORRECTED_SYSTEM" \
+            --run-id "$GITHUB_RUN_ID" --job-id "$CORRECTED_JOB_ID" --artifact-id "$ARTIFACT_ID" \
+            --artifact-digest "${ARTIFACT_DIGEST#sha256:}"
+
+      - name: Upload candidate and post-upload records
+        uses: actions/upload-artifact@v7
+        with:
+          name: mozkey-corrected-records-${{ matrix.system }}
+          path: ${{ runner.temp }}/mozkey-corrected-records/*.json
+          if-no-files-found: error
