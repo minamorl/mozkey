@@ -1,0 +1,16 @@
+actionlint: exit 0
+shellcheck and individual bash syntax: exit 0
+test_all_native_elfs_including_emacs_and_component_are_checked (__main__.CompatibilityTest) ... ok
+test_current_format_and_schema_stay_strict (__main__.CompatibilityTest) ... ok
+test_inner_and_installed_icons_must_match (__main__.CompatibilityTest) ... ok
+test_mixed_unknown_traversal_and_symlink_payloads_rejected (__main__.CompatibilityTest) ... ok
+test_official_source_hashes_and_native_old_packages (__main__.CompatibilityTest) ... ok
+test_package_provenance_preserves_original_archive (__main__.CompatibilityTest) ... ok
+test_separate_locked_snapshot_and_source_remain_unchanged (__main__.CompatibilityTest) ... ok
+test_source_or_format_change_is_rejected (__main__.CompatibilityTest) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.537s
+
+OK
+Git-free compatibility fixtures: exit 0

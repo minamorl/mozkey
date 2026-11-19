@@ -1,0 +1,23 @@
+{
+  "files_sha256": {
+    ".github/workflows/linux.yaml": "c08b90555c2e8d166b043cf92d14bcccd139a483cf41cdfd6cccb646492b1504",
+    "LICENSE": "44cdd923b91ea9199293abecc2762c70c87dbf1e581c027a94c416368d1a648c",
+    "THIRD_PARTY_NOTICES.md": "e1bc0a70491f19f5acc7edcae23a1aa5c3b317009246837abd04e0f436c87c46",
+    "docs/build_mozc_for_linux.md": "bcc93a01c5ee88c8e85f12e2ef4a91657d97e1c83838695062edae418835fdb3",
+    "src/.bazeliskrc": "59acd943a0d15254345f3e176f42786af2b4fba83b1657341cf56e017a7db19a",
+    "src/config.bzl": "08ac59def69d2100356fcce7f74a32775bd4c142378689338182f7b5e48999af",
+    "src/data/dictionary_koyasi/BUILD.bazel": "a0cc21085ed84db13fffdb95e7ce4be88395f71293946feeab95b8fabddc3b1a",
+    "src/data/dictionary_oss/BUILD.bazel": "dfbe4196c50c956c7abc33c902a80f0babaaad347d393c25c608a9f8cec3956a",
+    "src/data/dictionary_oss/README.txt": "6b1de66bc6fa30e0b45dc45b8c8f6c57bd78aff923c261a3efffac8eb86f7bac",
+    "src/data/installer/credits_en.html": "aae12cc9db479d937f294f1afeed0935ef05d57a1e1d4256e0900957b19df0ad",
+    "src/unix/BUILD.bazel": "5abdaa43194aa97593e437dd54a59c1ff3e1937894e980ca3439439f64a65962",
+    "src/unix/build_icons.py": "c0a349680b64aafa4f1b08d296dfb16b4110e52384ce7f35334c9850bb536a91",
+    "src/unix/build_package.py": "fa05a3838125a479375e6d11d72bbf8767d916b7f05e2ae1ca57ad8372aaaa19",
+    "src/unix/ibus/BUILD.bazel": "a7eed3629173574207210a685a808a627c6cd88b3d2c96e891b57a9ee89aeffc",
+    "src/unix/ibus/gen_mozc_xml.py": "e8fabab2bc690830b26b7cab28e0a6fefd3c5ef6ad05fd6714088158d9ff2138",
+    "src/win32/installer/zenz_runtime/licenses/Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "tools/dictionary/prepare_daily_dictionary.ps1": "21a18e3b44935e540162ce2a628b938cd764b1fa692a444bfc0afab0d7ccd7e5"
+  },
+  "repository": "koyasi777/mozkey",
+  "source_sha": "ea2e9f5cfb80fccf50caca1af097b2f0830be52a"
+}
