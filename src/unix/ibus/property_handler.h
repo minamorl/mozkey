@@ -31,6 +31,7 @@
 #define MOZC_UNIX_IBUS_PROPERTY_HANDLER_H_
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "client/client.h"
@@ -58,8 +59,11 @@ class PropertyHandler {
   // Update properties.
   void Update(IbusEngineWrapper* engine, const commands::Output& output);
 
-  void ProcessPropertyActivate(IbusEngineWrapper* engine,
-                               const char* property_name, uint property_state);
+  // Returns the mode command response for the engine to apply in full, including
+  // committed text, preedit, candidates and properties. Other properties and
+  // unsuccessful commands do not produce an update.
+  std::optional<commands::Output> ProcessPropertyActivate(
+      const char* property_name, uint property_state);
 
   // Following two methods represent two aspects of an IME state.
   // * (activated, disabled) == (false, false)
@@ -95,7 +99,8 @@ class PropertyHandler {
   void UpdateCompositionModeIcon(
       IbusEngineWrapper* engine,
       commands::CompositionMode new_composition_mode);
-  void SetCompositionMode(commands::CompositionMode composition_mode);
+  std::optional<commands::Output> SetCompositionMode(
+      commands::CompositionMode composition_mode);
 
   IbusPropListWrapper prop_root_;
   IbusPropertyWrapper prop_composition_mode_;

@@ -29,6 +29,7 @@
 
 #include "unix/ibus/property_handler.h"
 
+#include <optional>
 #include <string>
 
 #include "absl/log/check.h"
@@ -382,7 +383,7 @@ void PropertyHandler::UpdateCompositionModeIcon(
   engine->UpdateProperty(&prop_composition_mode_);
 }
 
-void PropertyHandler::SetCompositionMode(
+std::optional<commands::Output> PropertyHandler::SetCompositionMode(
     commands::CompositionMode composition_mode) {
   commands::SessionCommand command;
   commands::Output output;
@@ -396,22 +397,22 @@ void PropertyHandler::SetCompositionMode(
   if (is_activated_ && composition_mode == kImeOffCompositionMode) {
     command.set_type(commands::SessionCommand::TURN_OFF_IME);
     command.set_composition_mode(original_composition_mode_);
-    client_->SendCommand(command, &output);
   } else {
     command.set_type(commands::SessionCommand::SWITCH_COMPOSITION_MODE);
     command.set_composition_mode(composition_mode);
-    client_->SendCommand(command, &output);
   }
-  DCHECK(output.has_status());
-  original_composition_mode_ = output.status().mode();
-  is_activated_ = output.status().activated();
+  if (!client_->SendCommand(command, &output) || !output.has_status()) {
+    LOG(ERROR) << "Composition mode command failed";
+    return std::nullopt;
+  }
+  // UpdateAll applies the response and calls Update to synchronize mode state.
+  return output;
 }
 
-void PropertyHandler::ProcessPropertyActivate(IbusEngineWrapper* engine,
-                                              const char* property_name,
-                                              uint property_state) {
+std::optional<commands::Output> PropertyHandler::ProcessPropertyActivate(
+    const char* property_name, uint property_state) {
   if (IsDisabled()) {
-    return;
+    return std::nullopt;
   }
 
   if (prop_mozc_tool_.IsInitialized()) {
@@ -432,12 +433,12 @@ void PropertyHandler::ProcessPropertyActivate(IbusEngineWrapper* engine,
       if (!client_->LaunchTool(entry->mode, "")) {
         LOG(ERROR) << "cannot launch: " << entry->mode;
       }
-      return;
+      return std::nullopt;
     }
   }
 
   if (property_state != PROP_STATE_CHECKED) {
-    return;
+    return std::nullopt;
   }
 
   if (prop_composition_mode_.IsInitialized()) {
@@ -455,11 +456,10 @@ void PropertyHandler::ProcessPropertyActivate(IbusEngineWrapper* engine,
       if (!entry) {
         continue;
       }
-      SetCompositionMode(entry->composition_mode);
-      UpdateCompositionModeIcon(engine, entry->composition_mode);
-      break;
+      return SetCompositionMode(entry->composition_mode);
     }
   }
+  return std::nullopt;
 }
 
 bool PropertyHandler::IsActivated() const { return is_activated_; }
