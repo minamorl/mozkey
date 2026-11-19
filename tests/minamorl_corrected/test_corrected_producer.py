@@ -36,7 +36,7 @@ class ProducerTest(unittest.TestCase):
         path.write_bytes(data)
         return path
 
-    def test_lockfile_mode_is_off_for_all_bazel_invocations_and_the_recipe(self):
+    def test_configured_cquery_and_all_bazel_invocations_share_the_release_options(self):
         control_sha = "1" * 40
         files = {
             name: inputs.sha256_file(self.write(name, b"recipe fixture"))
@@ -46,7 +46,7 @@ class ProducerTest(unittest.TestCase):
              patch.object(recipe, "tree_entries"), patch.object(recipe, "blob_digests", return_value=files):
             recorded_recipe = recipe.measure_recipe(self.root, control_sha, "bazelisk")
 
-        checked = Mock(side_effect=[b"", b"//unix/ibus:engine\n"])
+        checked = Mock(side_effect=[b"", b"@@//unix/ibus:engine\n//unix/ibus:engine\n//unix:server\n"])
         run = Mock(side_effect=lambda argv, **_: subprocess.CompletedProcess(argv, 0, stdout=b"{}"))
         args = SimpleNamespace(system="x86_64-linux", run_id="123", job_id="456", bazel="bazelisk", control_sha=control_sha)
         with patch.multiple(
@@ -61,11 +61,47 @@ class ProducerTest(unittest.TestCase):
                                 self.root, {"source_sha": "3" * 40, "tree_sha": "4" * 40}, {}, recorded_recipe)
 
         argv = [checked.call_args_list[1].args[0], *(call.args[0] for call in run.call_args_list[:3])]
-        self.assertEqual(["query", "test", "build", "build"], [command[1] for command in argv])
+        self.assertEqual(["cquery", "test", "build", "build"], [command[1] for command in argv])
+        options = ["--config=release_build", f"--package_path={self.root / 'dataset-overlay'}:%workspace%",
+                   "--strip=never", "--lockfile_mode=off"]
         for command in argv:
+            self.assertEqual(options, command[2:6])
             self.assertEqual(["--lockfile_mode=off"], [arg for arg in command if arg.startswith("--lockfile_mode=")])
+        self.assertEqual([
+            "--universe_scope=//:package", "--noimplicit_deps", "--output=starlark",
+            "--starlark:expr=str(target.label)", 'filter("^(@@)?//", kind("^cc_binary rule$", deps(//:package)))',
+        ], argv[0][6:])
+        self.assertEqual(["//unix/ibus:engine", "//unix:server"], argv[2][6:])
+        self.assertEqual(["//:package"], argv[3][6:])
         actual_package = shlex.join(argv[-1]).replace(str(self.root / "dataset-overlay"), "$RUNNER_TEMP/dataset-overlay")
         self.assertEqual(actual_package, recorded_recipe["command"])
+
+    def test_configured_cquery_rejects_empty_or_malformed_output(self):
+        for output in (b"", b"\n", b"//unix:server (0eadbeef)\n", b"//:ok\n@@qt//:windows\n",
+                       b"//unix/../ibus:engine\n", b"//unix//ibus:engine\n", b"//unix:engine\nnoise\n"):
+            with self.subTest(output=output), patch.object(build, "checked_output", return_value=output):
+                with self.assertRaisesRegex(inputs.InputError, "workspace binary targets"):
+                    build.body_targets("bazelisk", self.root, recipe.release_build_options(recipe.OVERLAY_FLAG))
+
+    def test_configured_cquery_rejects_target_patterns_even_with_valid_labels(self):
+        for pattern in ("@@//unix/...:all", "//unix/...", "//unix/.../ibus:engine", "//unix/./ibus:engine",
+                        "//unix/../ibus:engine", "//:all", "@@//unix:all", "//unix:all-targets", "//unix:*"):
+            output = f"@@//unix/ibus:engine\n{pattern}\n".encode()
+            with self.subTest(pattern=pattern), patch.object(build, "checked_output", return_value=output):
+                with self.assertRaisesRegex(inputs.InputError, "workspace binary targets"):
+                    build.body_targets("bazelisk", self.root, recipe.release_build_options(recipe.OVERLAY_FLAG))
+
+    def test_configured_cquery_validates_dotted_package_components(self):
+        options = recipe.release_build_options(recipe.OVERLAY_FLAG)
+        valid = b"@@//:engine\n@@//unix/.hidden/ibus.v2:engine.debug\n//unix/...suffix:engine\n"
+        with patch.object(build, "checked_output", return_value=valid):
+            self.assertEqual(["//:engine", "//unix/...suffix:engine", "//unix/.hidden/ibus.v2:engine.debug"],
+                             build.body_targets("bazelisk", self.root, options))
+        for length in (1, 2, 3, 4, 5, 128):
+            invalid = f"//unix/{'.' * length}/ibus:engine\n".encode()
+            with self.subTest(length=length), patch.object(build, "checked_output", return_value=valid + invalid):
+                with self.assertRaisesRegex(inputs.InputError, "workspace binary targets"):
+                    build.body_targets("bazelisk", self.root, options)
 
     def test_overlay_checks_published_receipt_against_ea2_target_and_generated_bytes(self):
         ea2, target, overlay = (self.root / name for name in ("ea2", "target", "overlay"))

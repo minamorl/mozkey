@@ -102,3 +102,45 @@ Tracked checkout SHA-256 after fixture removal: 61f03acd0e993df2f4ce767bf19c54c7
 
 COMMAND: git diff --check
 EXIT_CODE: 0
+
+Configured Linux body enumeration
+
+Reference: https://bazel.build/query/cquery
+
+COMMAND: python3 -B -m unittest discover -s tests/minamorl_corrected -p 'test_corrected_producer.py' -k configured_cquery
+EXIT_CODE: 0
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.004s
+
+OK
+
+amd64 runner APT HTTPS setup and configured query regression
+
+References: https://raw.githubusercontent.com/Debian/apt/main/doc/sources.list.5.xml
+https://raw.githubusercontent.com/Debian/apt/main/doc/apt.conf.5.xml
+https://raw.githubusercontent.com/Debian/apt/main/doc/apt-transport-http.1.xml
+
+COMMAND: python3 -B -m unittest discover -s tests/minamorl_corrected -p 'test_corrected_apt.py'
+EXIT_CODE: 0
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.005s
+
+OK
+
+COMMAND: python3 -B -m unittest discover -s tests/minamorl_corrected -p 'test_corrected_producer.py' -k configured_cquery
+EXIT_CODE: 0
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.005s
+
+OK
+
+COMMAND: /Users/minamorl/.cc/tmp/Is3GCcsa/mozkey-ci-review.wN941VbW/actionlint .github/workflows/minamorl-linux-corrected.yml
+EXIT_CODE: 0
+
+COMMAND: npm_config_update_notifier=false npm_config_cache="$TMPDIR/corrected-prettier" npx --yes prettier@3.6.2 --no-config --check .github/workflows/minamorl-linux-corrected.yml
+EXIT_CODE: 0
+Checking formatting...
+All matched files use Prettier code style!

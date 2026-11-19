@@ -28,6 +28,7 @@ RECIPE_PATHS = {
     "tools/minamorl/corrected_recipe.py",
     "tools/minamorl/corrected_archive.py",
     "tools/minamorl/corrected_build.py",
+    "tools/minamorl/corrected_apt.py",
     "tools/minamorl/corrected_diagnostics.py",
 }
 OVERLAY_FLAG = "--package_path=$RUNNER_TEMP/dataset-overlay:%workspace%"
